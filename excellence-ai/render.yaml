@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: excellence-ai
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: workbooks
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false                  # Must be set manually in Render dashboard
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: WORKBOOK_DIR
+        value: /data/workbooks
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: APP_SECRET_KEY
+        generateValue: true          # Render generates a secure random value
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: ENABLE_WEB_SCRAPING
+        value: "true"
+      - key: ENABLE_OCR
+        value: "false"
